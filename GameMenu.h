@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Menu.h"
 
-using namespace  sf;
+using namespace sf;
 
 class GameMenu: public Menu {
 public:

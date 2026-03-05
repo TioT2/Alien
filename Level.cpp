@@ -29,21 +29,21 @@ Level::Level(std::shared_ptr<RenderWindow> wind, Planets num) {
     wave_timer->restart();
 
     font = std::make_unique<Font>();
-    font->loadFromFile("../fonts/tab.ttf");
+    std::ignore = font->openFromFile("../fonts/tab.ttf");
 
-    wave_text = std::make_unique<Text>("Wave", *font);
+    wave_text = std::make_unique<Text>(*font, "Wave");
     wave_text->setFillColor(Color::Yellow);
     wave_text->setCharacterSize(20);
-    wave_text->setPosition(window->getSize().x / 2.f - 150, 50);
+    wave_text->setPosition(Vector2f(window->getSize().x / 2.f - 150, 50));
 
-    win_text = std::make_unique<Text>("Win", *font);
-    lose_text = std::make_unique<Text>("Lose", *font);
+    win_text = std::make_unique<Text>(*font, "Win");
+    lose_text = std::make_unique<Text>(*font, "Lose");
     win_text->setFillColor(Color::White);
     lose_text->setFillColor(Color::Red);
     win_text->setCharacterSize(20);
     lose_text->setCharacterSize(20);
-    win_text->setPosition(100, 700);
-    lose_text->setPosition(100, 700);
+    win_text->setPosition(Vector2f(100, 700));
+    lose_text->setPosition(Vector2f(100, 700));
     win_text->setString("Press TAB to continue");
     lose_text->setString("Press Esc to exit");
 
@@ -70,9 +70,9 @@ Level::Level(std::shared_ptr<RenderWindow> wind, Planets num) {
             break;
     }
 
-    textures[0]->loadFromFile(fname);
-    textures[1]->loadFromFile("../images/game_over.png");
-    textures[2]->loadFromFile(won_name);
+    std::ignore = textures[0]->loadFromFile(fname);
+    std::ignore = textures[1]->loadFromFile("../images/game_over.png");
+    std::ignore = textures[2]->loadFromFile(won_name);
 
     for (auto i = 0; i < 3; i++)
         sprites.emplace_back(std::make_unique<Sprite>(*textures[i]));
@@ -108,10 +108,13 @@ int Level::run() {
     while (window->isOpen())
     {
         if (!is_win and !is_lose) {
-            Event event;
-            while (window->pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window->close();
+            for (;;) {
+                if (auto eopt = window->pollEvent(); eopt) {
+                    if (eopt->is<Event::Closed>())
+                        window->close();
+                } else {
+                    break;
+                }
             }
 
             if (hero->getHp() <= 0)
@@ -151,7 +154,7 @@ int Level::run() {
                     if (!it->isRed())
                         it->setSpriteColor(Color::White);
 
-                    if (it->getRect().intersects(it1->getRect()) and !it1->isForHero()) {
+                    if (it->getRect().findIntersection(it1->getRect()) and !it1->isForHero()) {
                         it->setIsRed(true);
                         if (it->isRed())
                             it->setSpriteColor(Color::Red);
@@ -163,7 +166,7 @@ int Level::run() {
             }
 
             for (auto &it1 : bullets) {
-                if (hero->getRect().intersects(it1->getRect()) and it1->isForHero()) {
+                if (hero->getRect().findIntersection(it1->getRect()) and it1->isForHero()) {
                     hero->receiveDamage(it1->getDamage());
                     it1->setLife(false);
                 }
@@ -227,20 +230,30 @@ int Level::run() {
                 bullet->draw(*window);
         }
         else if (is_win) {
-            Event event;
-            while (window->pollEvent(event)) {
-                if (event.type == Event::Closed)
+            for (;;) {
+                Event event = Event::Closed();
+                if (auto eopt = window->pollEvent())
+                    event = *eopt;
+                else
+                    break;
+
+                if (event.is<Event::Closed>())
                     window->close();
-                else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Tab)
+                else if (auto e = event.getIf<Event::KeyPressed>(); e->code == Keyboard::Key::Tab)
                     return 1;
             }
             window->draw(*sprites[2]);
             window->draw(*win_text);
         }
         else if (is_lose) {
-            Event event;
-            while (window->pollEvent(event)) {
-                if (event.type == Event::Closed or (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape))
+            for (;;) {
+                Event event = Event::Closed();
+                if (auto eopt = window->pollEvent())
+                    event = *eopt;
+                else
+                    break;
+
+                if (event.is<Event::Closed>() or (event.is<Event::KeyPressed>() && event.getIf<Event::KeyPressed>()->code == Keyboard::Key::Escape))
                     window->close();
             }
             window->draw(*sprites[1]);

@@ -7,7 +7,7 @@ void Creature::draw(RenderWindow& window) const {
 FloatRect Creature::getRect() {
     x = sprite.getPosition().x;
     y = sprite.getPosition().y;
-    return {x, y, 100, 100};
+    return FloatRect({x, y}, {100, 100});
 }
 
 void Creature::setSpriteColor(Color c) {

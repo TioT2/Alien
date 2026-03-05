@@ -30,6 +30,6 @@ include_directories(./images)
 include_directories(./audio)
 include_directories(./fonts)
 
-find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
+find_package(SFML 3.0 COMPONENTS Graphics Window System Audio REQUIRED)
 
-target_link_libraries(Alien sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(Alien SFML::Graphics SFML::Window SFML::System SFML::Audio)

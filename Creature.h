@@ -32,7 +32,7 @@ protected:
     float current_frame_2;
 
     Texture texture; //sfml текстура
-    Sprite  sprite;
+    Sprite  sprite = Sprite(texture);
 
 public:
     virtual void move() = 0;

@@ -9,13 +9,13 @@ damage(dmg), for_hero(for_hero_) {
     timer = std::make_unique<Clock>();
     timer->restart();
 
-    texture.loadFromFile("../images/m_bullet.png");
+    std::ignore = texture.loadFromFile("../images/m_bullet.png");
     sprite.setTexture(texture);
 
     if (dir > 0)
-        sprite.setPosition(x_ + 60,y_ + 30);
+        sprite.setPosition(Vector2f(x_ + 60, y_ + 30));
     else
-        sprite.setPosition(x_ + 20, y_ + 50);
+        sprite.setPosition(Vector2f(x_ + 20, y_ + 50));
 }
 
 void Bullet::move() {
@@ -23,10 +23,10 @@ void Bullet::move() {
     timer->restart();
 
     if (direction >= 0) {
-        sprite.move(speed * dt, 0);
+        sprite.move(Vector2f(speed * dt, 0));
     } else {
-        sprite.setRotation(180);
-        sprite.move(-speed * dt, 0);
+        sprite.setRotation(degrees(180));
+        sprite.move(Vector2f(-speed * dt, 0));
     }
 
     auto actual_x = sprite.getPosition().x;
@@ -36,7 +36,7 @@ void Bullet::move() {
 }
 
 FloatRect Bullet::getRect() {
-    return {sprite.getPosition().x, sprite.getPosition().y, 20, 20};
+    return {{sprite.getPosition().x, sprite.getPosition().y}, {20, 20}};
 }
 
 void Bullet::draw(RenderWindow &window) {

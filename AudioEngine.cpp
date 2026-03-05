@@ -13,15 +13,16 @@ AudioEngine::AudioEngine() {
     for (auto i = 0; i < TRACKS_AMOUNT; i++)
         tracks[i] = std::make_unique<sf::Music>();
 
-    tracks[0]->openFromFile("../audio/StartingMenu.ogg");
-    tracks[1]->openFromFile("../audio/MainMenu.ogg");
-    tracks[2]->openFromFile("../audio/Lor.ogg");
-    tracks[3]->openFromFile("../audio/Fight.ogg");
+    std::ignore = tracks[0]->openFromFile("../audio/StartingMenu.ogg");
+    std::ignore = tracks[1]->openFromFile("../audio/MainMenu.ogg");
+    std::ignore = tracks[2]->openFromFile("../audio/Lor.ogg");
+    std::ignore = tracks[3]->openFromFile("../audio/Fight.ogg");
 
     current_track = STARTINGMENU;
 
     for (auto i = 0; i < TRACKS_AMOUNT; i++) {
-        tracks[i]->setLoop(true);
+        // tracks[i]->setLoop(true);
+        tracks[i]->setLooping(true);
         tracks[i]->setVolume(0);
     }
 }

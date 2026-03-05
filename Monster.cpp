@@ -37,10 +37,10 @@ COOLDOWN(cd) {
 
     on_ground = false;
 
-    texture.loadFromFile("../images/ALIEN.png");
+    std::ignore = texture.loadFromFile("../images/ALIEN.png");
     sprite.setTexture(texture);
 
-    sprite.setPosition(x, y);
+    sprite.setPosition(Vector2f(x, y));
 
     current_frame = 0;
     current_frame_2 = 0;
@@ -64,11 +64,9 @@ void Monster::move() {
             current_frame = 0;
 
         on_ground = false;
-        sprite.setTextureRect(IntRect(fall_vec[0].x,
-                                      fall_vec[0].y,
-                                      fall_vec[0].width,
-                                      fall_vec[0].height));
-        sprite.move(0, -speed_y * dt + g_accel * dt * dt / 2);
+        sprite.setTextureRect(IntRect(Vector2i(fall_vec[0].x, fall_vec[0].y),
+                                      Vector2i(fall_vec[0].width, fall_vec[0].height)));
+        sprite.move(Vector2f(0, -speed_y * dt + g_accel * dt * dt / 2));
         speed_y = speed_y - g_accel * dt;
     }
 
@@ -102,51 +100,39 @@ bool Monster::attack() {
     if (on_ground && std::abs(distance_to_hero) <= 300) {
         if (distance_to_hero >= 0) {
             if (!is_firing) {
-                sprite.setTextureRect(IntRect(attack_vec[0].x,
-                                              attack_vec[0].y,
-                                              attack_vec[0].width,
-                                              attack_vec[0].height));
+                sprite.setTextureRect(IntRect(Vector2i(attack_vec[0].x, attack_vec[0].y),
+                                              Vector2i(attack_vec[0].width, attack_vec[0].height)));
                 return false;
             }
 
-            sprite.setTextureRect(IntRect(attack_vec[(int)current_frame].x,
-                                          attack_vec[(int)current_frame].y,
-                                          attack_vec[(int)current_frame].width,
-                                          attack_vec[(int)current_frame].height));
+            sprite.setTextureRect(IntRect(Vector2i(attack_vec[(int)current_frame].x, attack_vec[(int)current_frame].y),
+                                          Vector2i(attack_vec[(int)current_frame].width, attack_vec[(int)current_frame].height)));
             current_frame += dt * FRAME_RATIO;
         } else {
             if (!is_firing)
             {
-                sprite.setTextureRect(IntRect(attack_vec[0].width,
-                                              attack_vec[0].y,
-                                              -attack_vec[0].width,
-                                              attack_vec[0].height));
+                sprite.setTextureRect(IntRect(Vector2i(attack_vec[0].width, attack_vec[0].y),
+                                              Vector2i(-attack_vec[0].width, attack_vec[0].height)));
                 return false;
             }
-            sprite.setTextureRect(IntRect(attack_vec[(int)current_frame].x + attack_vec[(int)current_frame].width,
-                                          attack_vec[(int)current_frame].y,
-                                          -attack_vec[(int)current_frame].width,
-                                          attack_vec[(int)current_frame].height));
+            sprite.setTextureRect(IntRect(Vector2i(attack_vec[(int)current_frame].x + attack_vec[(int)current_frame].width, attack_vec[(int)current_frame].y),
+                                          Vector2i(-attack_vec[(int)current_frame].width, attack_vec[(int)current_frame].height)));
             current_frame += dt * FRAME_RATIO;
         }
     }
     else if (on_ground && distance_to_hero > 300) {
         current_frame += dt * FRAME_RATIO_1;
         int j = (int)(current_frame / 3);
-        sprite.setTextureRect(IntRect(move_vec[j].x,
-                                      move_vec[j].y,
-                                      move_vec[j].width,
-                                      move_vec[j].height));
-        sprite.move(speed_x * dt, 0);
+        sprite.setTextureRect(IntRect(Vector2i(move_vec[j].x, move_vec[j].y),
+                                      Vector2i(move_vec[j].width, move_vec[j].height)));
+        sprite.move(Vector2f(speed_x * dt, 0));
     }
     else if (on_ground && distance_to_hero < -300) {
         current_frame += dt * FRAME_RATIO_1;
         int j = (int)(current_frame / 3);
-        sprite.setTextureRect(IntRect(move_vec[j].x + move_vec[j].width,
-                                      move_vec[j].y,
-                                      -move_vec[j].width,
-                                      move_vec[j].height));
-        sprite.move(-speed_x * dt, 0);
+        sprite.setTextureRect(IntRect(Vector2i(move_vec[j].x + move_vec[j].width, move_vec[j].y),
+                                      Vector2i(-move_vec[j].width, move_vec[j].height)));
+        sprite.move(Vector2f(-speed_x * dt, 0));
     }
     return false;
 }

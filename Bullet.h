@@ -5,8 +5,8 @@
 
 class Bullet {
 protected:
-    Sprite sprite;
     Texture texture;
+    Sprite sprite {texture};
 
     std::unique_ptr<Clock> timer;
     float dt;
