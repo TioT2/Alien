@@ -16,36 +16,35 @@
 
 class Game {
 private:
-    StartingMenu* starting_menu;
-    MainMenu* main_menu;
-    GameMenu* game_menu;
-    RandomNumberGenerator* rng;
-    AudioEngine* a_eng;
-    std::array<Level*, 3> planets;
+    std::unique_ptr<StartingMenu> starting_menu;
+    std::unique_ptr<MainMenu> main_menu;
+    std::unique_ptr<GameMenu> game_menu;
+    std::unique_ptr<RandomNumberGenerator> rng;
+    std::unique_ptr<AudioEngine> a_eng;
+    std::array<std::unique_ptr<Level>, 3> planets;
 
     std::shared_ptr<sf::RenderWindow> window;
     std::unique_ptr<sf::Texture> load_texture;
     std::unique_ptr<sf::Sprite> load_sprite;
 
-    Game();
-    static Game* instance;
+    Game() = default;
+
+    static std::unique_ptr<Game> instance;
 public:
-    static Game* getInstance();
+    static Game& getInstance();
 
-    [[maybe_unused]] MainMenu* getMainMenu() const;
-    [[maybe_unused]] StartingMenu* getStartingMenu() const;
-    [[maybe_unused]] GameMenu* getGameMenu() const;
+    MainMenu* getMainMenu() const;
+    StartingMenu* getStartingMenu() const;
+    GameMenu* getGameMenu() const;
     RandomNumberGenerator* getRng() const;
-    [[maybe_unused]] AudioEngine* getAEng() const;
+    AudioEngine* getAEng() const;
 
-    [[maybe_unused]] const std::shared_ptr<sf::RenderWindow>& getWindow() const;
+    const std::shared_ptr<sf::RenderWindow>& getWindow() const;
 
     void init();
     void runGame();
 
     static void deleteGame();
-
-    ~Game();
 };
 
 

@@ -5,6 +5,7 @@
 #define ALIEN_STARTINGMENU_H
 
 #include "MainMenu.h"
+
 #include "Menu.h"
 
 using namespace sf;

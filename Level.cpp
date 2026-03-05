@@ -77,18 +77,19 @@ Level::Level(std::shared_ptr<RenderWindow> wind, Planets num) {
     for (auto i = 0; i < 3; i++)
         sprites.emplace_back(std::make_unique<Sprite>(*textures[i]));
 
-    hero = std::make_unique<Player>(400.f,
-                                    500,
-                                    window->getSize().x,
-                                    window->getSize().y,
-                                    2000);
+    hero = std::make_unique<Player>(400.f, 500, window->getSize().x, window->getSize().y, 2000);
 
     for (auto i = 0; i < 0; i++) {
-        monsters.emplace_back(
-                std::make_unique<Monster>(monster_parameters.speed,
-                                          Game::getInstance()->getRng()->
-                                          getRandomInt(0,static_cast<int>(window->getSize().x)),
-                                          window->getSize().x, window->getSize().y, monster_parameters.hp, monster_parameters.cooldown));
+        auto monster = std::make_unique<Monster>(
+            monster_parameters.speed,
+            Game::getInstance().getRng()->getRandomInt(0,static_cast<int>(window->getSize().x)),
+            window->getSize().x,
+            window->getSize().y,
+            monster_parameters.hp,
+            monster_parameters.cooldown
+        );
+
+        monsters.emplace_back(std::move(monster));
     }
 }
 
@@ -268,11 +269,11 @@ int Level::run() {
 void Level::spawnMonsters(unsigned wave) {
     for (int i = 0; i < wave * 2; i++) {
         auto x0 = 0;
-        if (Game::getInstance()->getRng()->getRandomInt(0, 1)) {
-            x0 = Game::getInstance()->getRng()->getRandomInt(0,
+        if (Game::getInstance().getRng()->getRandomInt(0, 1)) {
+            x0 = Game::getInstance().getRng()->getRandomInt(0,
                                                              static_cast<int>(window->getSize().x / 2) - 150);
         } else {
-            x0 = Game::getInstance()->
+            x0 = Game::getInstance().
                 getRng()->getRandomInt(static_cast<int>(window->getSize().x / 2) + 150,
                                        static_cast<int>(window->getSize().x));
         }

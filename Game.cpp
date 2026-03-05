@@ -3,25 +3,12 @@
 //
 #include "Game.h"
 
+std::unique_ptr<Game> Game::instance = nullptr;
 
-Game* Game::instance = nullptr;
-
-Game* Game::getInstance() {
-    if (instance)
-        return instance;
-    instance = new Game();
-    return instance;
-}
-
-Game::Game() {
-    starting_menu = nullptr;
-    main_menu = nullptr;
-    game_menu = nullptr;
-    rng = nullptr;
-    a_eng = nullptr;
-    planets[PURPLE] = nullptr;
-    planets[FIRE] = nullptr;
-    planets[ELECTRIC] = nullptr;
+Game& Game::getInstance() {
+    if (instance == nullptr)
+        instance = std::unique_ptr<Game>(new Game());
+    return *instance;
 }
 
 void Game::init() {
@@ -34,19 +21,20 @@ void Game::init() {
     window->draw(*load_sprite);
     window->display();
 
-    starting_menu = new StartingMenu(window);
-    main_menu = new MainMenu(window);
-    game_menu = new GameMenu(window);
-    rng = new RandomNumberGenerator();
-    a_eng = new AudioEngine();
+    starting_menu = std::make_unique<StartingMenu>(window);
+    main_menu = std::make_unique<MainMenu>(window);
+    game_menu = std::make_unique<GameMenu>(window);
+    rng = std::make_unique<RandomNumberGenerator>();
+    a_eng = std::make_unique<AudioEngine>();
 
-    planets[PURPLE] = new Level(window, PURPLE);
-    planets[FIRE] = new Level(window, FIRE);
-    planets[ELECTRIC] = new Level(window, ELECTRIC);
+    // Initialize all levels
+    for (auto lvl : {PURPLE, FIRE, ELECTRIC})
+        planets[lvl] = std::make_unique<Level>(window, lvl);
 }
 
 void Game::runGame() {
-    auto audio_thread = std::thread(&AudioEngine::run, a_eng);
+    // It's safe to pass a_eng as a pointer because *this outlives audio_thread
+    auto audio_thread = std::thread(&AudioEngine::run, a_eng.get());
     starting_menu->run();
 
     a_eng->setFadeFlag(LOR);
@@ -70,46 +58,30 @@ void Game::runGame() {
     audio_thread.join();
 }
 
-[[maybe_unused]] MainMenu* Game::getMainMenu() const {
-    return main_menu;
+MainMenu* Game::getMainMenu() const {
+    return main_menu.get();
 }
 
-[[maybe_unused]] StartingMenu* Game::getStartingMenu() const {
-    return starting_menu;
+StartingMenu* Game::getStartingMenu() const {
+    return starting_menu.get();
 }
 
-[[maybe_unused]] GameMenu *Game::getGameMenu() const {
-    return game_menu;
+GameMenu *Game::getGameMenu() const {
+    return game_menu.get();
 }
 
 RandomNumberGenerator *Game::getRng() const {
-    return rng;
+    return rng.get();
 }
 
-[[maybe_unused]] AudioEngine* Game::getAEng() const {
-    return a_eng;
+AudioEngine* Game::getAEng() const {
+    return a_eng.get();
 }
 
-[[maybe_unused]] const std::shared_ptr<sf::RenderWindow> &Game::getWindow() const {
+const std::shared_ptr<sf::RenderWindow> & Game::getWindow() const {
     return window;
 }
 
 void Game::deleteGame() {
-    delete instance;
-    instance = nullptr;
+    instance.reset();
 }
-
-Game::~Game() {
-    delete starting_menu;
-    delete main_menu;
-    delete game_menu;
-    delete rng;
-    delete a_eng;
-    delete planets[PURPLE];
-    delete planets[FIRE];
-    delete planets[ELECTRIC];
-}
-
-
-
-

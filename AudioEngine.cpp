@@ -56,7 +56,7 @@ void AudioEngine::run() {
     tracks[current_track]->setVolume(100);
     tracks[current_track]->play();
 
-    while(Game::getInstance()->getWindow()->isOpen()) {
+    while(Game::getInstance().getWindow()->isOpen()) {
         if (fade_flag[0])
             fade(fade_flag[1]);
     }
