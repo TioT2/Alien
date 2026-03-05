@@ -82,7 +82,7 @@ Level::Level(std::shared_ptr<RenderWindow> wind, Planets num) {
     for (auto i = 0; i < 0; i++) {
         auto monster = std::make_unique<Monster>(
             monster_parameters.speed,
-            Game::getInstance().getRng()->getRandomInt(0,static_cast<int>(window->getSize().x)),
+            Game::getInstance().getRng().getRandomInt(0,static_cast<int>(window->getSize().x)),
             window->getSize().x,
             window->getSize().y,
             monster_parameters.hp,
@@ -269,12 +269,11 @@ int Level::run() {
 void Level::spawnMonsters(unsigned wave) {
     for (int i = 0; i < wave * 2; i++) {
         auto x0 = 0;
-        if (Game::getInstance().getRng()->getRandomInt(0, 1)) {
-            x0 = Game::getInstance().getRng()->getRandomInt(0,
-                                                             static_cast<int>(window->getSize().x / 2) - 150);
+        if (Game::getInstance().getRng().getRandomInt(0, 1)) {
+            x0 = Game::getInstance().getRng().getRandomInt(0, static_cast<int>(window->getSize().x / 2) - 150);
         } else {
             x0 = Game::getInstance().
-                getRng()->getRandomInt(static_cast<int>(window->getSize().x / 2) + 150,
+                getRng().getRandomInt(static_cast<int>(window->getSize().x / 2) + 150,
                                        static_cast<int>(window->getSize().x));
         }
         monsters.emplace_back(

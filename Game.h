@@ -23,23 +23,26 @@ private:
     std::unique_ptr<AudioEngine> a_eng;
     std::array<std::unique_ptr<Level>, 3> planets;
 
+    // Window is shared_ptr because it's passed to level constructors
     std::shared_ptr<sf::RenderWindow> window;
+
     std::unique_ptr<sf::Texture> load_texture;
     std::unique_ptr<sf::Sprite> load_sprite;
 
     Game() = default;
 
     static std::unique_ptr<Game> instance;
+
 public:
     static Game& getInstance();
 
-    MainMenu* getMainMenu() const;
-    StartingMenu* getStartingMenu() const;
-    GameMenu* getGameMenu() const;
-    RandomNumberGenerator* getRng() const;
-    AudioEngine* getAEng() const;
+    MainMenu& getMainMenu();
+    StartingMenu& getStartingMenu();
+    GameMenu& getGameMenu();
+    RandomNumberGenerator& getRng();
+    AudioEngine& getAEng();
 
-    const std::shared_ptr<sf::RenderWindow>& getWindow() const;
+    sf::RenderWindow& getWindow();
 
     void init();
     void runGame();

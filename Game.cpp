@@ -3,7 +3,7 @@
 //
 #include "Game.h"
 
-std::unique_ptr<Game> Game::instance = nullptr;
+std::unique_ptr<Game> Game::instance;
 
 Game& Game::getInstance() {
     if (instance == nullptr)
@@ -58,28 +58,28 @@ void Game::runGame() {
     audio_thread.join();
 }
 
-MainMenu* Game::getMainMenu() const {
-    return main_menu.get();
+MainMenu& Game::getMainMenu() {
+    return *main_menu;
 }
 
-StartingMenu* Game::getStartingMenu() const {
-    return starting_menu.get();
+StartingMenu& Game::getStartingMenu() {
+    return *starting_menu;
 }
 
-GameMenu *Game::getGameMenu() const {
-    return game_menu.get();
+GameMenu& Game::getGameMenu() {
+    return *game_menu;
 }
 
-RandomNumberGenerator *Game::getRng() const {
-    return rng.get();
+RandomNumberGenerator& Game::getRng() {
+    return *rng;
 }
 
-AudioEngine* Game::getAEng() const {
-    return a_eng.get();
+AudioEngine& Game::getAEng() {
+    return *a_eng;
 }
 
-const std::shared_ptr<sf::RenderWindow> & Game::getWindow() const {
-    return window;
+sf::RenderWindow & Game::getWindow() {
+    return *window;
 }
 
 void Game::deleteGame() {
